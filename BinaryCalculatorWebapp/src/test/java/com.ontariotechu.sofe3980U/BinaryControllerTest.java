@@ -5,12 +5,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.fasterxml.jackson.annotation.ObjectIdGenerators.None;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 
 import org.junit.runner.RunWith;
-
+import org.mockito.internal.matchers.Null;
 import org.junit.*;
 import org.junit.runner.*;
 import org.springframework.beans.factory.annotation.*;
@@ -55,6 +57,56 @@ public class BinaryControllerTest {
             .andExpect(view().name("result"))
 			.andExpect(model().attribute("result", "1110"))
 			.andExpect(model().attribute("operand1", "111"));
+    }
+
+    @Test
+	    public void invalidOperator() throws Exception {
+        this.mvc.perform(post("/").param("operand1","111").param("operator","x").param("operand2","111"))//.andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(view().name("Error"));
+    }
+
+    @Test
+	    public void missingOperand1() throws Exception {
+        this.mvc.perform(post("/").param("operator","&").param("operand2","11"))//.andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(view().name("result"))
+            .andExpect(model().attribute("result", "0"));
+    }
+
+    @Test
+	    public void missingOperand2() throws Exception {
+        this.mvc.perform(post("/").param("operand1","10").param("operator","&"))//.andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(view().name("result"))
+            .andExpect(model().attribute("result", "0"));
+    }
+
+    @Test
+	    public void postAndParameter() throws Exception {
+        this.mvc.perform(post("/").param("operand1","10").param("operator","&").param("operand2","11"))//.andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(view().name("result"))
+			.andExpect(model().attribute("result", "10"))
+			.andExpect(model().attribute("operand1", "10"));
+    }
+
+    @Test
+	    public void postOrParameter() throws Exception {
+        this.mvc.perform(post("/").param("operand1","10").param("operator","|").param("operand2","11"))//.andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(view().name("result"))
+			.andExpect(model().attribute("result", "11"))
+			.andExpect(model().attribute("operand1", "10"));
+    }
+
+    @Test
+	    public void postMultiplyParameter() throws Exception {
+        this.mvc.perform(post("/").param("operand1","11").param("operator","*").param("operand2","11"))//.andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(view().name("result"))
+			.andExpect(model().attribute("result", "1001"))
+			.andExpect(model().attribute("operand1", "11"));
     }
 
 }

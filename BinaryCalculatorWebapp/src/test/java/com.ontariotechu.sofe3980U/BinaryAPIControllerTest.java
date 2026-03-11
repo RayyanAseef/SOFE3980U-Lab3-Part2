@@ -32,13 +32,13 @@ public class BinaryAPIControllerTest {
     @Autowired
     private MockMvc mvc;
 
-   
     @Test
     public void add() throws Exception {
         this.mvc.perform(get("/add").param("operand1","111").param("operand2","1010"))//.andDo(print())
             .andExpect(status().isOk())
             .andExpect(content().string("10001"));
     }
+
 	@Test
     public void add2() throws Exception {
         this.mvc.perform(get("/add_json").param("operand1","111").param("operand2","1010"))//.andDo(print())
@@ -48,4 +48,74 @@ public class BinaryAPIControllerTest {
 			.andExpect(MockMvcResultMatchers.jsonPath("$.result").value(10001))
 			.andExpect(MockMvcResultMatchers.jsonPath("$.operator").value("add"));
     }
+
+    @Test
+    public void add3() throws Exception {
+        this.mvc.perform(get("/add").param("operand1","111"))//.andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().string("111"));
+    }
+
+    @Test
+    public void add4() throws Exception {
+        this.mvc.perform(get("/add").param("operand2","111"))//.andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().string("111"));
+    }
+
+        @Test
+    public void add5() throws Exception {
+        this.mvc.perform(get("/add").param("operand3","111"))//.andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().string("0"));
+    }
+
+    @Test
+    public void and() throws Exception {
+        this.mvc.perform(get("/and").param("operand1","10").param("operand2","11"))//.andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().string("10"));
+    }
+	@Test
+    public void and2() throws Exception {
+        this.mvc.perform(get("/and_json").param("operand1","10").param("operand2","11"))//.andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.operand1").value(10))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.operand2").value(11))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.result").value(10))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.operator").value("and"));
+    }
+
+    @Test
+    public void or() throws Exception {
+        this.mvc.perform(get("/or").param("operand1","10").param("operand2","11"))//.andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().string("11"));
+    }
+	@Test
+    public void or2() throws Exception {
+        this.mvc.perform(get("/or_json").param("operand1","10").param("operand2","11"))//.andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.operand1").value(10))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.operand2").value(11))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.result").value(11))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.operator").value("or"));
+    }
+
+    @Test
+    public void multiply() throws Exception {
+        this.mvc.perform(get("/multiply").param("operand1","11").param("operand2","11"))//.andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().string("1001"));
+    }
+	@Test
+    public void multiply2() throws Exception {
+        this.mvc.perform(get("/multiply_json").param("operand1","11").param("operand2","11"))//.andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.operand1").value(11))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.operand2").value(11))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.result").value(1001))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.operator").value("multiply"));
+    }
+
 }
